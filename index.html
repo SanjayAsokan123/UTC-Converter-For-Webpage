@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IST to UTC Time Converter</title>
+    <link rel="icon" href="data:,">
+
+    <!-- Update your CSS link -->
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header-container">
+            <img src="Flytutor logo.png" alt="Flytutor Logo" class="logo">
+            <h1 class="animate-title">Flytutor Log Info</h1>
+        </div>
+        
+        <!-- Login Section -->
+        
+        <div id="login-section" class="section fade-in">
+            <h2 class="animate-title glow">Welcome</h2>
+            <div class="login-options slide-in">
+                <button onclick="showSignIn()" class="auth-btn pulse-button">Sign In</button>
+                <button onclick="showSignUp()" class="auth-btn pulse-button">Sign Up</button>
+            </div>
+            
+            <!-- Sign In Form -->
+            <div id="sign-in-form" class="auth-form-container">
+                <div class="auth-form">
+                    <input type="text" id="login-username" placeholder="Enter your name" class="animate-input slide-in">
+                    <input type="password" id="login-password" placeholder="Enter your password" class="animate-input slide-in">
+                    <button onclick="signIn()" class="pulse-button bounce-in">Sign In</button>
+                </div>
+            </div>
+
+            <!-- Sign Up Form -->
+            <div id="sign-up-form" class="auth-form-container" style="display: none;">
+                <div class="auth-form">
+                    <input type="text" id="signup-username" placeholder="Choose username" class="animate-input slide-in">
+                    <input type="password" id="signup-password" placeholder="Choose password" class="animate-input slide-in">
+                    <input type="email" id="signup-email" placeholder="Enter email" class="animate-input slide-in">
+                    <button onclick="signUp()" class="pulse-button bounce-in">Sign Up</button>
+                </div>
+            </div>
+        </div>
+        <!-- Converter Section -->
+        <div id="converter-section" class="section fade-in" style="display: none;">
+            <div class="header-controls">
+                <div id="user-details" class="user-info"></div>
+                <button onclick="logout()" class="logout-btn pulse-button">Logout</button>
+            </div>
+
+            <!-- Current Time Display -->
+            <div class="current-time fade-in">
+                <div class="time-display">
+                    <h3>Current IST</h3>
+                    <div id="ist-display" class="time glow"></div>
+                </div>
+                <div class="time-display">
+                    <h3>Current UTC</h3>
+                    <div id="utc-display" class="time glow"></div>
+                </div>
+            </div>
+            <!-- Add this after the header-controls div -->
+            <div class="trainee-details fade-in">
+                <h4>Training Session Information</h4>
+                <div class="trainee-form">
+                    <input type="text" id="trainee-name" placeholder="Enter Trainee Name" class="animate-input">
+                    <input type="text" id="trainee-uin" placeholder="Enter UIN Number" class="animate-input">
+                </div>
+            </div>
+                <!-- Conversion Form -->
+                <div class="conversion-form bounce-in">
+                    <h3>Convert IST to UTC</h3>
+                    
+                    <!-- Exercise toggle and selector -->
+                    <div class="exercise-control">
+                        <label class="enable-switch">
+                            <input type="checkbox" id="enable-exercise">
+                            <span class="slider round"></span>
+                            Enable Exercise Selection
+                        </label>
+                    </div>
+                    <div class="exercise-selector">
+                        <label>Select Exercise:</label>
+                        <select id="exercise-select" class="animate-input" disabled>
+                            <option value="">Select Exercise</option>
+                            <option value="Intro to Digital Sky">Exercise 1 - Intro to Digital Sky</option>
+                            <option value="Exercise 2 - RPAS Familiarization & Safety briefing">Exercise 2 - RPAS Familiarization & Safety briefing</option>
+                            <option value="Exercise 3 - Introductory Flight">Exercise 3 - Introductory Flight</option>
+                            <option value="Exercise 4 - Take-off, Climbing, Descending & Maintaining height">Exercise 4 - Take-off, Climbing, Descending & Maintaining height</option>
+                            <option value="Exercise 5 - Basic Controls: Pitch, Roll, and Yaw">Exercise 5 - Basic Controls: Pitch, Roll, and Yaw</option>
+                            <option value="Exercise 6 - Disorientation and Recovery">Exercise 6 - Disorientation and Recovery</option>
+                            <option value="Exercise 7 - Progress Check">Exercise 7 - Progress Check</option>
+                            <option value="Exercise 8A- Level turns in both directions">Exercise 8A- Level turns in both directions</option>
+                            <option value="Exercise 8B- Level turns in both directions">Exercise 8B- Level turns in both directions</option>
+                            <option value="Exercise 9A- Climbing and Descending turns">Exercise 9A- Climbing and Descending turns </option>
+                            <option value="Exercise 9B- Climbing and Descending turns">Exercise 9B- Climbing and Descending turns </option>
+                            <option value="Exercise 10A- Left and Right Square Circuit Patterns">Exercise 10A- Left and Right Square Circuit Patterns</option>
+                            <option value="Exercise 10B- Left and Right Square Circuit Patterns">Exercise 10B- Left and Right Square Circuit Patterns</option>
+                            <option value="Exercise 11A- Flying in Circles">Exercise 11A- Flying in Circles</option>
+                            <option value="Exercise 11">Exercise 11B- Flying in Circles</option>
+                            <option value="Exercise 11B- Flying in Circles">Exercise 12A- Flying in Figure of 8</option>
+                            <option value="Exercise 12B- Flying in Figure of 8">Exercise 12B- Flying in Figure of 8</option>
+                            <option value="Exercise 13A-  Night Flying">Exercise 13A-  Night Flying </option>
+                            <option value="Exercise 13B-  Night Flying">Exercise 13B-  Night Flying </option>
+                            <option value="Exercise 14- Abnormal / emergency Procedures">Exercise 14- Abnormal / emergency Procedures</option>
+                            <option value="Exercise 15A- Mission Planning and Instrument Flying">Exercise 15A- Mission Planning and Instrument Flying</option>
+                            <option value="Exercise 15B- Mission Planning and Instrument Flying">Exercise 15B- Mission Planning and Instrument Flying</option>
+                            <option value="Exercise 16- Auto Mission Flight">Exercise 16- Auto Mission Flight</option>
+                            <option value="Exercise 17- Final Test">Exercise 17- Final Test</option>
+                        </select>
+                    </div>
+
+                    <!-- Time conversion inputs - these stay enabled -->
+                    <div class="input-group">
+                        <div class="time-field-group">
+                            <label>Takeoff Time:</label>
+                            <div class="time-inputs">
+                                <input type="time" id="takeoff-ist-time" required class="animate-input">
+                                <select id="takeoff-am-pm" class="animate-input">
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="time-field-group">
+                            <label>Landing Time:</label>
+                            <div class="time-inputs">
+                                <input type="time" id="landing-ist-time" required class="animate-input">
+                                <select id="landing-am-pm" class="animate-input">
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button onclick="convertBothTimes()" class="convert-btn pulse-button">Convert</button>
+                    </div>
+                </div>
+                <!-- Conversion Result -->
+                <div class="result-section fade-in">
+                    <h3>Converted UTC Time</h3>
+                    <div id="converted-time" class="converted-result glow"></div>
+                    <div id="conversion-timestamp" class="timestamp"></div>
+                </div>
+
+                <!-- Usage History -->
+                <div class="history-section slide-up">
+                    <div class="history-header">
+                        <h3>Usage History</h3>
+                        <button onclick="clearUsageHistory()" class="clear-btn pulse-button">Clear History</button>
+                    </div>
+                    <div id="usage-log" class="usage-log"></div>
+                </div>
+                <div class="history-controls">
+                    <button id="downloadHistory" class="btn btn-primary">
+                        <i class="fas fa-download"></i> Download History
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add script tag before closing body tag -->
+<script src="script.js"></script>
+
+</body>
+</html>
