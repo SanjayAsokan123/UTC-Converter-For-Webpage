@@ -151,6 +151,7 @@ function updateUsageDisplay() {
                     <th>Landing (UTC)</th>
                     <th>Flight Duration</th>
                     <th>Cumulative Time</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -159,7 +160,7 @@ function updateUsageDisplay() {
     let totalMinutes = 0;
     const tableRows = usageLog
         .filter(entry => entry.user === currentUser)
-        .map(entry => {
+        .map((entry, index) => {
             const duration = calculateTimeDifference(entry.takeoffTime, entry.landingTime);
             if (duration) {
                 const [hours, minutes] = duration.split(':').map(Number);
@@ -170,7 +171,7 @@ function updateUsageDisplay() {
             const cumulativeTime = `${cumulativeHours.toString().padStart(2, '0')}:${cumulativeMinutes.toString().padStart(2, '0')}`;
             
             return `
-                <tr class="history-row">
+                <tr class="history-row" data-index="${index}">
                     <td>${entry.date}</td>
                     <td>${entry.user}</td>
                     <td>${entry.traineeName || 'N/A'}</td>
@@ -180,6 +181,7 @@ function updateUsageDisplay() {
                     <td>${entry.landingTime || 'N/A'}</td>
                     <td>${duration || 'N/A'}</td>
                     <td>${cumulativeTime}</td>
+                    <td><button onclick="editEntry(${index})" class="edit-btn">Edit</button></td>
                 </tr>
             `;
         })
@@ -190,7 +192,8 @@ function updateUsageDisplay() {
         </table>
     `;
     document.getElementById('usage-log').innerHTML = tableHeader + tableRows + tableFooter;
-}function convertISTtoUTC(istTime, amPm) {
+}
+function convertISTtoUTC(istTime, amPm) {
     let [hours, minutes] = istTime.split(':');
     hours = parseInt(hours);
     if (amPm === 'PM' && hours !== 12) {
@@ -354,3 +357,58 @@ document.getElementById('enable-exercise').addEventListener('change', function()
         });
     }
 });
+
+function editEntry(index) {
+    const entry = usageLog.find((e, i) => i === index && e.user === currentUser);
+    if (!entry) return;
+
+    // Populate form fields with entry data
+    document.getElementById('trainee-name').value = entry.traineeName || '';
+    document.getElementById('trainee-uin').value = entry.traineeUIN || '';
+    document.getElementById('exercise-select').value = entry.exercise || '';
+
+    // Parse takeoff time
+    if (entry.takeoffTime) {
+        const [takeoffHours, takeoffMinutes] = entry.takeoffTime.split(':');
+        const takeoffHour = parseInt(takeoffHours);
+        const istTakeoff = convertUTCtoIST(takeoffHour, parseInt(takeoffMinutes));
+        document.getElementById('takeoff-ist-time').value = istTakeoff.time;
+        document.getElementById('takeoff-am-pm').value = istTakeoff.ampm;
+    }
+
+    // Parse landing time
+    if (entry.landingTime) {
+        const [landingHours, landingMinutes] = entry.landingTime.split(':');
+        const landingHour = parseInt(landingHours);
+        const istLanding = convertUTCtoIST(landingHour, parseInt(landingMinutes));
+        document.getElementById('landing-ist-time').value = istLanding.time;
+        document.getElementById('landing-am-pm').value = istLanding.ampm;
+    }
+
+    // Remove the old entry
+    usageLog = usageLog.filter((e, i) => !(i === index && e.user === currentUser));
+    updateUsageDisplay();
+}
+
+function convertUTCtoIST(hours, minutes) {
+    hours = hours + 5;
+    minutes = minutes + 30;
+    
+    if (minutes >= 60) {
+        minutes -= 60;
+        hours += 1;
+    }
+    
+    if (hours >= 24) {
+        hours -= 24;
+    }
+
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+
+    return {
+        time: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`,
+        ampm: ampm
+    };
+}
